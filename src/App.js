@@ -1,14 +1,16 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-// import { getDatabase } from 'firebase/database';
-// import { getFirestore } from 'firebase/firestore';
+
+import { getFirestore } from 'firebase/firestore';
 
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Login from './components/Login/Login';
+import AuthProvider from "./components/AuthProvider/AuthProvider";
 
-// import logo from './logo.svg';
 import './App.css';
 import Register from "./components/Register/Register";
+import Home from "./components/Home/Home";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyASEJGWw6vUO_23e_W157Gi7ydKs2a2w3o",
@@ -21,23 +23,28 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-// const database = getDatabase(app);
-// const firestore = getFirestore(app);
+const firestore = getFirestore(app);
 
 
 function App() {
+
   return (
-      <Router>
-        <div className="App">
-            <Routes>
-                <Route path="/"         element={<Login auth={auth} />} />
-                <Route path="/register" element={<Register auth={auth} />} />
-                {/* Add more routes for other pages/components */}
+      <AuthProvider firestore={firestore} auth={auth}>
+          <Router>
+            <div className="App">
+                <Routes>
+                    <Route path="/login"         element={<Login auth={auth} />} />
+                    <Route path="/register" element={<Register auth={auth}
+                                                                firestore={firestore}/>} />
+                    <Route path="/"         element={<Home auth={auth}
+                                                           firestore={firestore}/>} />
+                    {/* Add more routes for other pages/components */}
+                </Routes>
+            </div>
+          </Router>
+      </AuthProvider>
 
-            </Routes>
 
-        </div>
-      </Router>
   );
 }
 

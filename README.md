@@ -36,6 +36,7 @@ An app for sharing summaries of ebooks and journal articles.
 
 `displayName` : string
 `verifName` : string
+`aoe` : string - area of expertise- 
 `id` : string - uid
 `email` : string
 `photoURL` : string
@@ -43,15 +44,17 @@ An app for sharing summaries of ebooks and journal articles.
 `verifBooks` : bool
 `verifArticles` : bool
 `verifAdmin` : bool
-`books_checked_out` : list of objects - book id, title, author, date checked out
-`books_created` : list of objects - book ids, title, author, date created
-`articles_checked_out` : list of objects - article ids, title, author, 
-journal, date checked out
-`articles_created` : list of objects - article id, title, author, journal, date created
-`books_read` : list of objects - book id, title, author, date read
-`articles_read` : list of objects - article id, title, author, journal, date read
-`books_rated` : list of objects - book id, title, author, rating
-`articles_rated` : list of objects - article id, title, author, journal, rating
+`books` :
+- `checked_out` : list of objects - book id, title, author, date checked out
+- `created` : list of objects - book ids, title, author, date created
+- `read` : list of objects - book id, title, author, date read
+- `rated` : list of objects - book id, title, author, rating
+- `books` :
+`articles` :  
+- `checked_out` : list of objects - book id, title, author, date checked out
+- `created` : list of objects - book ids, title, author, date created
+- `read` : list of objects - book id, title, author, date read
+- `rated` : list of objects - book id, title, author, rating
 
 
 
@@ -66,7 +69,7 @@ journal, date checked out
 ### Login :Complete
 - Google only
 
-### Register: In Progress
+### Register: Complete
 - Add name is the one in Google isn't accurate
 
 ### Admin
@@ -85,9 +88,9 @@ journal, date checked out
 
 ### Books
 - Display all books 'organized' some how
-- v2 - sort by new / most popular / search
+- v2 - sort by new / most views / most popular / search
 - List books, button to check out - button will add book_id in firebase
 
 ### Articles
 - Display all articles 'organized' some how
-- v2 - sort by new / most popular / search
+- v2 - sort by new / most views / most popular / search

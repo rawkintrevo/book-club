@@ -16,7 +16,6 @@ function Login( {auth}) {
 
         try {
             const docSnap = await getDoc(userDocRef);
-            console.log('User exists:', docSnap.exists());
             return docSnap.exists();
         } catch (error) {
             console.error('Error checking user existence:', error);
@@ -27,13 +26,13 @@ function Login( {auth}) {
         try {
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
-            console.log(result);
             const userExists = await checkIfUserExists(result.user.uid);
 
             if (userExists) {
-                navigate('/home')
+                navigate('/')
             } else {
                 navigate('/register');
+                // console.log(auth.currentUser)
             }
         } catch (error) {
             setError(error.message);

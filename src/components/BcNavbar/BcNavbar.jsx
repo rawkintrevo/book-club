@@ -33,12 +33,13 @@ function BcNavbar( {auth, firestore}) {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto">
-                    <Nav.Link as={Link} to="/browse">
+                    <Nav.Link as={Link} to="/">
                         Find new stuff
                     </Nav.Link>
                     <Nav.Link as={Link} to="/mystuff">
                         My Stuff
                     </Nav.Link>
+                    <Button variant="outline-light" as={Link} to="/upload">Create</Button>
                     {currentUser && currentUser.verifAdmin && (
                         <Nav.Link as={Link} to="/admin">
                             Admin

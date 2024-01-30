@@ -9,6 +9,10 @@ An app for sharing summaries of ebooks and journal articles.
 - [ ] if a user is checking out a book they didn't create, pop up a modal
   shaming them into buying it if they got value out of it.
 - [ ] a user can be authorized for books, articles, admin, or all
+- [ ] a 'reset progress' button for books and articles, removes `read` tags 
+  (for when you want to read it again, but not in one sitting)
+- [ ] 'next' button on multi-part content - ie always there unless its the 
+  final part of a book or article (which solves for one part articles)
 
 ## Databases
 
@@ -30,15 +34,24 @@ An app for sharing summaries of ebooks and journal articles.
 
 ### User Database
 
-`name` : string
+`displayName` : string
+`verifName` : string
 `id` : string - uid
 `email` : string
-`verified` : bool
+`photoURL` : string
+`reviewed` : bool
+`verifBooks` : bool
+`verifArticles` : bool
+`verifAdmin` : bool
 `books_checked_out` : list of objects - book id, title, author, date checked out
 `books_created` : list of objects - book ids, title, author, date created
 `articles_checked_out` : list of objects - article ids, title, author, 
 journal, date checked out
 `articles_created` : list of objects - article id, title, author, journal, date created
+`books_read` : list of objects - book id, title, author, date read
+`articles_read` : list of objects - article id, title, author, journal, date read
+`books_rated` : list of objects - book id, title, author, rating
+`articles_rated` : list of objects - article id, title, author, journal, rating
 
 
 

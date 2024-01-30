@@ -1,12 +1,12 @@
 import { useState } from 'react';
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {Button, Card, Container, Form} from "react-bootstrap";
 import { doc, setDoc } from 'firebase/firestore';
 
 function Register( {auth, firestore}) {
     // const [error, setError] = useState(null);
     // setError(null);
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const currentUser = auth.currentUser
     const [displayName, setDisplayName] = useState(currentUser.displayName || '');
     const [verificationName, setVerificationName] = useState(currentUser.displayName || '');
@@ -47,9 +47,10 @@ function Register( {auth, firestore}) {
             await setDoc(doc(firestore, 'users', currentUser.uid), updatedProfile, { merge: true });
 
             alert('Registered successfully!');
+            navigate('/');
         } catch (error) {
             console.error('Error updating profile:', error);
-            alert('Failed to update profile. Please try again later.');
+            alert('Failed to register profile. Please try again later.');
         }
     };
 

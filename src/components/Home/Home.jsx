@@ -7,8 +7,6 @@ import Review from "../Review/Review";
 
 function Home( {firestore, auth}) {
     const { currentUser } = useAuth();
-    console.log(currentUser)
-    // console.log(auth)
 
 
     // If no user is logged in, redirect to the login page

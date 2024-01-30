@@ -10,7 +10,9 @@ import AuthProvider from "./components/AuthProvider/AuthProvider";
 import './App.css';
 import Register from "./components/Register/Register";
 import Home from "./components/Home/Home";
+import Admin from "./components/Admin/Admin";
 
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const firebaseConfig = {
   apiKey: "AIzaSyASEJGWw6vUO_23e_W157Gi7ydKs2a2w3o",
@@ -38,6 +40,9 @@ function App() {
                                                                 firestore={firestore}/>} />
                     <Route path="/"         element={<Home auth={auth}
                                                            firestore={firestore}/>} />
+                    <Route path="/admin"         element={<Admin auth={auth}
+                                                           firestore={firestore}
+                                                            />} />
                     {/* Add more routes for other pages/components */}
                 </Routes>
             </div>

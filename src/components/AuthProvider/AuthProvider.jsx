@@ -25,11 +25,7 @@ export function AuthProvider({ auth, firestore, children }) {
                 const docSnap = await getDoc(userDocRef);
                 if (docSnap.exists()) {
                     const userData = docSnap.data();
-                    setCurrentUser({
-                        uid: user.uid,
-                        email: user.email,
-                        ...userData,
-                    });
+                    setCurrentUser(userData);
                 }
             } catch (error) {
                 console.error('Error loading user data:', error);
@@ -51,7 +47,7 @@ export function AuthProvider({ auth, firestore, children }) {
     }, [auth]);
 
     const value = {
-        currentUser,
+        currentUser
         // Add any other functions or properties you need
     };
 

@@ -53,9 +53,10 @@ function Login( {auth}) {
         >
             <Container style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                margin: '20px'
+                margin: '20px',
+                borderRadius: '10px'
             }}>
-                <Card bg="light" text="dark" style={{ opacity: 0.9, margin: '20px' }}>
+                <Card bg="light" text="dark" style={{ opacity: 0.9, margin: '20px', borderRadius: '10px' }}>
                     <Card.Body>
                         <h2>Login</h2>
                         {error && <p>{error}</p>}

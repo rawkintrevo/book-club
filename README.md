@@ -4,11 +4,13 @@
 
 An app for sharing summaries of ebooks and journal articles.
 
-## Main Page
+### Ideas
 
-- Recently Created
-- Most Popular
-- My Stuff
+- [ ] if a user is checking out a book they didn't create, pop up a modal
+  shaming them into buying it if they got value out of it.
+- [ ] a user can be authorized for books, articles, admin, or all
+
+## Databases
 
 ### Content Database
 `parts` : list of objects
@@ -32,10 +34,11 @@ An app for sharing summaries of ebooks and journal articles.
 `id` : string - uid
 `email` : string
 `verified` : bool
-`books_checked_out` : list of strings - book ids
-`books_created` : list of strings - book ids
-`articles_checked_out` : list of strings - article ids
-`articles_created` : list of strings - article ids
+`books_checked_out` : list of objects - book id, title, author, date checked out
+`books_created` : list of objects - book ids, title, author, date created
+`articles_checked_out` : list of objects - article ids, title, author, 
+journal, date checked out
+`articles_created` : list of objects - article id, title, author, journal, date created
 
 
 
@@ -47,19 +50,23 @@ An app for sharing summaries of ebooks and journal articles.
 
 ## Components
 
-### Login
+### Login :Complete
 - Google only
 
-### Register
+### Register: In Progress
 - Add name is the one in Google isn't accurate
 
 ### Admin
 - Display all users not verified - with button to verify or ignore
 
 ### Navbar
-- Find new stuff
-- My Stuff
-- Admin page if user is an admin
+- Find new stuff - redirect to browse page
+- My Stuff - page of stuff checked out and created
+- Admin page if user is an admin - page for authorizing new users
+- Logout
+
+### Browse
+- two tabs - books and articles
 
 ### Footer
 

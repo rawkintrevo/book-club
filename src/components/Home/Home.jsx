@@ -10,14 +10,14 @@ function Home( {firestore, auth}) {
     console.log(currentUser)
     // console.log(auth)
 
-    if ((!currentUser.verifBooks) && (!currentUser.verifArticles)) {
-        return (
-           <Review />
-        )
-    }
+
     // If no user is logged in, redirect to the login page
-    if (auth.currentUser === null) {
+    if (currentUser === null) {
         return <Navigate to="/login"/>;
+    } else if ((!currentUser.verifBooks) && (!currentUser.verifArticles)) {
+        return (
+            <Review />
+        )
     } else {
 
         return (

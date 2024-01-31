@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { getStorage } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 
 import { getFirestore } from 'firebase/firestore';
@@ -13,6 +14,7 @@ import Home from "./components/Home/Home";
 import Admin from "./components/Admin/Admin";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Create from "./components/Create/Create";
 
 const firebaseConfig = {
   apiKey: "AIzaSyASEJGWw6vUO_23e_W157Gi7ydKs2a2w3o",
@@ -26,6 +28,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
+const storage = getStorage(app);
 
 
 function App() {
@@ -43,6 +46,10 @@ function App() {
                     <Route path="/admin"         element={<Admin auth={auth}
                                                            firestore={firestore}
                                                             />} />
+                    <Route path="/upload"         element={<Create auth={auth}
+                                                                 firestore={firestore}
+                                                                   storage={storage}
+                    />} />
                     {/* Add more routes for other pages/components */}
                 </Routes>
             </div>

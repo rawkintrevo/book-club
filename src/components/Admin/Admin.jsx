@@ -65,7 +65,7 @@ function Admin( {firestore, auth}) {
             <div
                 style={{
                     backgroundImage: 'url("/img/admin.png")',
-                    backgroundSize: 'cover',
+                    backgroundSize: '100% auto',
                     backgroundPosition: 'center center',
                     height: '100vh',
                     display: 'flex',

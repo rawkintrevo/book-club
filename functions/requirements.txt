@@ -1,1 +1,7 @@
 firebase_functions~=0.1.0
+PyMuPDF==1.23.20
+openai==0.28.1
+tiktoken==0.5.2
+firebase-admin
+google-cloud-storage
+

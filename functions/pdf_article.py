@@ -2,10 +2,12 @@ import fitz  # PyMuPDF
 import openai
 import tiktoken
 
+
 def is_main_content(llm_response):
     # Placeholder for logic to determine if LLM response indicates end of main content
     # This could be based on keywords, sentiment, or any other criteria you define
     return "end of main content" not in llm_response
+
 
 def analyze_text_chunk(text_chunk):
     completion = openai.ChatCompletion.create(

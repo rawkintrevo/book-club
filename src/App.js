@@ -15,6 +15,10 @@ import Admin from "./components/Admin/Admin";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Create from "./components/Create/Create";
+import Content from "./components/Content/Content";
+import MyStuff from "./components/MyStuff/MyStuff";
+
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyASEJGWw6vUO_23e_W157Gi7ydKs2a2w3o",
@@ -50,6 +54,10 @@ function App() {
                                                                  firestore={firestore}
                                                                    storage={storage}
                     />} />
+                    <Route path="/article/:id" element={<Content firestore={firestore}
+                    auth = {auth} storage={storage}/>} />
+                    <Route path="/mystuff"         element={<MyStuff auth={auth}
+                                                           firestore={firestore}/>} />
                     {/* Add more routes for other pages/components */}
                 </Routes>
             </div>

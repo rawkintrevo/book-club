@@ -1,17 +1,14 @@
-import BcNavbar from "../BcNavbar/BcNavbar";
+import {useAuth} from "../AuthProvider/AuthProvider";
 import {Navigate} from "react-router-dom";
-
-import { useAuth } from '../AuthProvider/AuthProvider'
-
 import Review from "../Review/Review";
-import { Card, Container } from "react-bootstrap";
-import ListArticles from "../ListArticles/ListArticles";
-
-function Home( {firestore, auth}) {
-    const { currentUser } = useAuth();
+import BcNavbar from "../BcNavbar/BcNavbar";
+import {Card, Container} from "react-bootstrap";
 
 
-    // If no user is logged in, redirect to the login page
+
+function MyStuff( {firestore, auth, storage}) {
+    const {currentUser} = useAuth();
+
     if (currentUser === null) {
         return <Navigate to="/login"/>;
     } else if ((!currentUser.verifBooks) && (!currentUser.verifArticles)) {
@@ -25,7 +22,7 @@ function Home( {firestore, auth}) {
                 <BcNavbar firestore={firestore}
                           auth={auth}/>
                 <div style={{
-                    backgroundImage: 'url("/img/home.png")',
+                    backgroundImage: 'url("/img/mystuff.png")',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center center',
                     height: '100vh',
@@ -47,7 +44,7 @@ function Home( {firestore, auth}) {
                                 marginBottom: '10px',
                                 borderRadius: '5px',
                             }}>Welcome back {auth.currentUser.displayName}</Card.Title>
-                            <ListArticles firestore={firestore} auth={auth}/>
+                            This component is still under construction :/
                         </Card>
                     </Container>
                 </div>
@@ -58,4 +55,4 @@ function Home( {firestore, auth}) {
 
 }
 
-export default Home;
+export default MyStuff;

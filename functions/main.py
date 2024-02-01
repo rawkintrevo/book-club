@@ -7,7 +7,11 @@ from firebase_admin import initialize_app, firestore
 
 from google.cloud import storage
 
+from pdf_article import process_article
+
 import os
+import uuid
+import openai
 
 initialize_app()
 db = firestore.client()
@@ -15,6 +19,7 @@ db = firestore.client()
 
 @storage_fn.on_object_finalized()
 def handle_upload(event: storage_fn.CloudEvent[storage_fn.StorageObjectData]):
+    verbose=True
     # Get the file name and bucket name from the event data
     file_name = event.data.name
     bucket_name = event.data.bucket
@@ -29,19 +34,16 @@ def handle_upload(event: storage_fn.CloudEvent[storage_fn.StorageObjectData]):
     # Download the file to a temporary location
     temp_file = '/tmp/' + file_name
     file.download_to_filename(temp_file)
-
+    openai.api_key = os.environ.get("OPENAI_API_KEY")
     # Process the file (e.g., perform some operations or store it in a database)
-    # ...
-    doc_ref = db.collection('books').document('foo2')
-    doc_ref.set({'baz': True})
+    output = process_article(temp_file, verbose)
+    uuid_value = str(uuid.uuid4())
+    output['id'] = uuid_value
+    output['s3']['bucket'] = bucket_name
+    output['s3']['key'] = file_name
+    doc_ref = db.collection('articles').document(uuid_value)
+    doc_ref.set(output)
     # Delete the temporary file
     os.remove(temp_file)
-
     # Return a response (optional)
     return 'File upload handled successfully'
-# initialize_app()
-#
-#
-# @https_fn.on_request()
-# def on_request_example(req: https_fn.Request) -> https_fn.Response:
-#     return https_fn.Response("Hello world!")

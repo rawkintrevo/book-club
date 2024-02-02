@@ -17,8 +17,8 @@ function Create( {firestore, auth, storage}) {
 
         if (selectedFile) {
             const fileName = selectedFile.name;
-            if (!fileName.endsWith('.pdf')) {  //&& !fileName.endsWith('.epub')) {
-                alert('At this time only PDF files are accepted.');
+            if (!fileName.endsWith('.pdf') && !fileName.endsWith('.epub')) {
+                alert('At this time only PDF and EPUB files are accepted.');
                 event.target.value = ''; // Clear the file input
                 setSelectedFile(null); // Clear the selected file
                 return;

@@ -15,7 +15,7 @@ import Admin from "./components/Admin/Admin";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Create from "./components/Create/Create";
-import Content from "./components/Content/Content";
+import ContentPage from "./components/ContentPage/ContentPage";
 import MyStuff from "./components/MyStuff/MyStuff";
 
 
@@ -54,7 +54,7 @@ function App() {
                                                                  firestore={firestore}
                                                                    storage={storage}
                     />} />
-                    <Route path="/article/:id" element={<Content firestore={firestore}
+                    <Route path="/content/:id" element={<ContentPage firestore={firestore}
                     auth = {auth} storage={storage}/>} />
                     <Route path="/mystuff"         element={<MyStuff auth={auth}
                                                            firestore={firestore}/>} />

@@ -3,7 +3,7 @@ import openai
 import tiktoken
 import json
 
-from google.cloud.firestore import SERVER_TIMESTAMP
+
 
 def is_main_content(llm_response):
     # Placeholder for logic to determine if LLM response indicates end of main content
@@ -173,6 +173,7 @@ def process_article(file_path, verbose= False):
         o['summary'] = summarize(o['text'], long_text=long_text)
     final_output = {
         'title': output['title'],
+        "type": "article",
         'author': output['authors'],
         'journal': output['journal'],
         'parts': output['parts'],
@@ -187,7 +188,7 @@ def process_article(file_path, verbose= False):
         'short_description': '',
         'avg_rating': 0.00,  # updates on new rating (will be used for sorting)
         'n_saves': 0,  # updates on new checkout (will be used for sorting)
-        'created': SERVER_TIMESTAMP,  # Interpreted by firebase as timestamp on write
+        'created': "",  # Interpreted by firebase as timestamp on write
         'views': 0
     }
     return final_output

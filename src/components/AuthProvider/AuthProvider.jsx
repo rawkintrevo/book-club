@@ -46,9 +46,10 @@ export function AuthProvider({ auth, firestore, children }) {
         // eslint-disable-next-line
     }, [auth]);
 
+
     const value = {
-        currentUser
-        // Add any other functions or properties you need
+        currentUser,
+         // Add any other functions or properties you need
     };
 
     return (

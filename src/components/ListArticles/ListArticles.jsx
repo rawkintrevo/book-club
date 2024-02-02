@@ -13,8 +13,7 @@ function ListArticles({ firestore, auth }) {
   useEffect(() => {
     console.log('ListArticles.useEffect()')
     const fetchArticles = async () => {
-      console.log('ListArticles.useEffect().fetchArticles')
-      const articlesCollection = collection(firestore, 'articles');
+      const articlesCollection = collection(firestore, 'content');
 
       // Query the "articles" collection, order by some field (e.g., timestamp), and limit to 10 items
       const q = query(articlesCollection, orderBy('created', 'desc'), limit(10));
@@ -28,7 +27,7 @@ function ListArticles({ firestore, auth }) {
           // Add article data to the list
           newArticles.push({ id: doc.id, ...doc.data() });
         });
-        console.log("ListArticles.useEffect().fetchArticles().newArticles", newArticles)
+
         // Update the state with the new articles and set the last document for pagination
         setArticles(newArticles);
         setLastDocument(querySnapshot.docs[querySnapshot.docs.length - 1]);
@@ -43,7 +42,7 @@ function ListArticles({ firestore, auth }) {
   // Function to load more articles
   const loadMoreArticles = async () => {
     if (lastDocument) {
-      const articlesCollection = collection(firestore, 'articles');
+      const articlesCollection = collection(firestore, 'content');
       const q = query(articlesCollection, orderBy('created', 'desc'), startAfter(lastDocument), limit(10));
 
       try {
@@ -93,7 +92,7 @@ function ListArticles({ firestore, auth }) {
                 <Col md={8} lg={8}>
                   <div style={{ textAlign: 'left' }}>
                     <p>
-                      <Link to={'/article/' + article.id}><b>{article.title}</b></Link>
+                      <Link to={'/content/' + article.id}><b>{article.title}</b></Link>
                     </p>
                     <p style={{ fontSize: '0.6rem' }}>
                       {article.author}

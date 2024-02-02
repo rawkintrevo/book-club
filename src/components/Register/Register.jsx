@@ -26,20 +26,12 @@ function Register( {auth, firestore}) {
             verifBooks : false,
             verifArticles : false,
             verifAdmin : false,
-            books: {
-                checked_out : [],
-                created : [],
-                read : [],
-                rated : []
+            content: {
+                saved: {},
+                created : {},
+                read : {},
+                rated : {}
             },
-            articles: {
-                checked_out : [],
-                created : [],
-                read : [],
-                rated : []
-            }
-
-
         };
 
         try {

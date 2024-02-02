@@ -162,7 +162,11 @@ def process_article(file_path, verbose= False):
             })
         output['parts'] = parts
     else:
-        output['parts'] = [{"title": output['title'], "authors": output['authors'], "journal": output['journal'], "text": output['text']}]
+        output['parts'] = [{"title": output['title'],
+                            "authors": output['authors'],
+                            "journal": output['journal'],
+                            "text": output['text']
+                            }]
     if verbose: print(f"{len(output['parts'])} parts found.")
     for o in output['parts']:
         long_text = False
@@ -171,6 +175,7 @@ def process_article(file_path, verbose= False):
         if verbose:
             print(f"summarizing article- long_text:{long_text}")
         o['summary'] = summarize(o['text'], long_text=long_text)
+        o['text'] = ''
     final_output = {
         'title': output['title'],
         "type": "article",

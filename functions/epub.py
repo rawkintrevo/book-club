@@ -234,7 +234,7 @@ def book_dict_to_markdown(book_dict):
         part_output = {
             "summary": summary,
             "title": title,
-            "text": c['text'],
+            # "text": c['text'],
         }
         output['parts'].append(part_output)
     return output

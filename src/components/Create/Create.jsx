@@ -13,8 +13,21 @@ function Create( {firestore, auth, storage}) {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
+        const selectedFile = event.target.files[0];
+
+        if (selectedFile) {
+            const fileName = selectedFile.name;
+            if (!fileName.endsWith('.pdf') && !fileName.endsWith('.epub')) {
+                alert('At this time only PDF and EPUB files are accepted.');
+                event.target.value = ''; // Clear the file input
+                setSelectedFile(null); // Clear the selected file
+                return;
+            }
+
+            setSelectedFile(selectedFile);
+        }
     };
+
 
     const handleUpload = async () => {
         if (selectedFile) {
@@ -32,7 +45,9 @@ function Create( {firestore, auth, storage}) {
 
                 await uploadTask;
 
-                // Handle successful upload (optional)
+                // Redirect the user to the desired URL
+                window.location.href = '/';
+
                 console.log('File uploaded successfully');
             } catch (error) {
                 // Handle upload error (optional)
@@ -78,7 +93,7 @@ function Create( {firestore, auth, storage}) {
                             }}>Upload</Card.Title>
                             <Card.Body>
                                 <Form>
-                                    <Form.Group controlId="fileInput">
+                                    <Form.Group controlId="fileInput" style={{ marginBottom: '20px'}}>
                                         <Form.Label>Select File</Form.Label>
                                         <Form.Control type="file" onChange={handleFileChange} />
                                     </Form.Group>

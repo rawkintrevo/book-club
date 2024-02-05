@@ -27,16 +27,17 @@ function Home( {firestore, auth}) {
                 <div style={{
                     backgroundImage: 'url("/img/home.png")',
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center center',
-                    height: '100vh',
+                    backgroundPosition: 'center top',
+                    // height: '100vh',
                     display: 'flex',
-                    alignItems: 'center',
+                    // alignItems: 'center',
                     justifyContent: 'center',
                 }}>
                     <Container style={{
                         backgroundColor: 'rgba(255, 255, 255, 0.7)',
                         margin: '20px',
                         borderRadius: '10px',
+                        paddingTop: '20px'
                     }}>
                         <Card bg="light" text="dark" style={{ opacity: 0.9, margin: '20px', borderRadius: '10px' }}>
                             <Card.Title style={{

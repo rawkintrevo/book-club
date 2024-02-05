@@ -72,13 +72,11 @@ function Content( {firestore, auth, storage}) {
                         <p>
                             <b>Author(s):</b> {article.author}
                         </p>
-                        {article.journal ? (
-                            <p>
-                                <b>Journal:</b> {article.journal}
-                            </p>
+                        {article.journal ? ( <p><b>Journal:</b> {article.journal} </p>
                         ) : null}
                         <p>
-                            <b>Created:</b> {article.created.toDate().toLocaleDateString()}
+                            <b>Created:</b> {article.created.toDate().toLocaleDateString()} &nbsp;
+                            {article.created_by ? <><b>by:</b> {article.created_by.name}</> : null}
                         </p>
                         <div>
                             {link ? (
@@ -100,20 +98,25 @@ function Content( {firestore, auth, storage}) {
                                 </Button>
                             )}
                         </div>
-                        <Accordion defaultActiveKey={activeItem}>
-                            {article.parts.map((part, index) => (
-                                <Accordion.Item eventKey={index} key={index}>
-                                    <Accordion.Header
-                                        onClick={() => handleAccordionClick(index)}
-                                    >
-                                        {part.title}
-                                    </Accordion.Header>
-                                    <Accordion.Body>
-                                        {part.summary}
-                                    </Accordion.Body>
-                                </Accordion.Item>
-                            ))}
-                        </Accordion>
+                        {article.parts !== undefined ? (
+                            <Accordion defaultActiveKey={activeItem}>
+                                {article.parts.map((part, index) => (
+                                    <Accordion.Item eventKey={index} key={index}>
+                                        <Accordion.Header
+                                            onClick={() => handleAccordionClick(index)}
+                                        >
+                                            {part.title}
+                                        </Accordion.Header>
+                                        <Accordion.Body>
+                                            {part.summary}
+                                        </Accordion.Body>
+                                    </Accordion.Item>
+                                ))}
+                            </Accordion>
+                        ) : <Spinner animation="border" role="status">
+                            <span className="visually-hidden">Processing...</span>
+                        </Spinner>}
+
                     </Card.Body>
                     <ContentFooter firestore={firestore} auth={auth} storage={storage} articleId={articleId} article={article}/>
                 </Card>

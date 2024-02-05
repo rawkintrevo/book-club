@@ -3,6 +3,7 @@ import {Navigate} from "react-router-dom";
 import Review from "../Review/Review";
 import BcNavbar from "../BcNavbar/BcNavbar";
 import {Card, Container} from "react-bootstrap";
+import ListArticles from "../ListArticles/ListArticles";
 
 
 
@@ -44,7 +45,7 @@ function MyStuff( {firestore, auth, storage}) {
                                 marginBottom: '10px',
                                 borderRadius: '5px',
                             }}>Welcome back {auth.currentUser.displayName}</Card.Title>
-                            This component is still under construction :/
+                            <ListArticles firestore={firestore} auth={auth} by="user" currentUser={currentUser} />
                         </Card>
                     </Container>
                 </div>

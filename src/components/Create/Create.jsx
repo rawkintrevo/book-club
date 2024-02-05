@@ -7,6 +7,7 @@ import {  ref, uploadBytesResumable } from 'firebase/storage';
 import BcNavbar from "../BcNavbar/BcNavbar";
 
 
+
 function Create( {firestore, auth, storage}) {
     const { currentUser } = useAuth();
 
@@ -33,7 +34,14 @@ function Create( {firestore, auth, storage}) {
         if (selectedFile) {
             try {
                 const storageRef = ref(storage);
-                const fileRef = ref(storageRef, selectedFile.name);
+
+                const user_uid = currentUser.id
+                const { v4: uuidv4 } = require('uuid');
+                const doc_uid = uuidv4();
+                const fileNameParts = selectedFile.name.split(".");
+                const fileExtension = fileNameParts[fileNameParts.length - 1];
+
+                const fileRef = ref(storageRef, user_uid + '/'+ doc_uid + '.' + fileExtension);
 
                 const uploadTask = uploadBytesResumable(fileRef, selectedFile);
 
@@ -46,7 +54,7 @@ function Create( {firestore, auth, storage}) {
                 await uploadTask;
 
                 // Redirect the user to the desired URL
-                window.location.href = '/';
+                window.location.href = '/content/' + doc_uid;
 
                 console.log('File uploaded successfully');
             } catch (error) {

@@ -50,7 +50,7 @@ Give if 'end of main content' give your reasoning.
     return is_main_content(llm_response)
 
 
-def extract_main_content(pdf_path, verbose= True):
+def extract_main_content(pdf_path, doc_ref, verbose= True):
     if verbose: logger.log(f".extract_main_content - opening path: {pdf_path}")
     doc = fitz.open(pdf_path)
     full_text = ""
@@ -61,6 +61,10 @@ def extract_main_content(pdf_path, verbose= True):
     if verbose: logger.log(f".extract_main_content - analyze_cover: {output_s}")
     try:
         output = json.loads(output_s)
+        logger.log('output_s: ', output_s)
+        if 'authors' in output:
+            output['author'] = output['authors']
+        doc_ref.update(output)
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON: {e}")
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
@@ -156,10 +160,10 @@ def chunk_list(input_list, n):
     return chunks
 
 
-def process_article(file_path, verbose= False):
+def process_article(file_path, doc_ref, verbose= False):
 
     logger.log(f'process_article.verbose: {verbose}')
-    output = extract_main_content(file_path)
+    output = extract_main_content(file_path, doc_ref)
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
     tokens = encoding.encode(output["text"])
     n_tokens = len(tokens)

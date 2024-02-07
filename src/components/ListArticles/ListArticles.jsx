@@ -1,11 +1,11 @@
-import { collection, query, orderBy, limit, startAfter, getDocs } from 'firebase/firestore';
+import { collection, query, orderBy, limit, startAfter, getDocs, where } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import {Button, Card, Col, Row} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 
 // ... (import statements)
 
-function ListArticles({ firestore, auth }) {
+function ListArticles({ firestore, auth, by, currentUser }) {
   // State to store the list of articles and the last document to paginate
   const [articles, setArticles] = useState([]);
   const [lastDocument, setLastDocument] = useState(null);
@@ -16,7 +16,15 @@ function ListArticles({ firestore, auth }) {
       const articlesCollection = collection(firestore, 'content');
 
       // Query the "articles" collection, order by some field (e.g., timestamp), and limit to 10 items
-      const q = query(articlesCollection, orderBy('created', 'desc'), limit(10));
+      let q = query(articlesCollection, orderBy('created', 'desc'), limit(10));
+      if (by === "user") {
+        q = query(
+            articlesCollection,
+            where('created_by.id', '==', currentUser.id),
+            orderBy('created', 'desc'),
+            limit(10)
+        );
+      }
 
       try {
         const querySnapshot = await getDocs(q);
@@ -37,7 +45,7 @@ function ListArticles({ firestore, auth }) {
     };
 
     fetchArticles();
-  }, [firestore]);
+  }, [firestore, by, currentUser]);
 
   // Function to load more articles
   const loadMoreArticles = async () => {

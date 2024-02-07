@@ -3,7 +3,7 @@ import openai
 import tiktoken
 import json
 
-
+from firebase_functions import logger
 
 
 def is_main_content(llm_response):
@@ -13,6 +13,7 @@ def is_main_content(llm_response):
 
 
 def analyze_text_chunk(text_chunk):
+
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         temperature=0.1,
@@ -50,29 +51,48 @@ Give if 'end of main content' give your reasoning.
     return is_main_content(llm_response)
 
 
-def extract_main_content(pdf_path):
+def extract_main_content(pdf_path, doc_ref, verbose= True):
+    if verbose: logger.log(f".extract_main_content - opening path: {pdf_path}")
     doc = fitz.open(pdf_path)
     full_text = ""
     chunk_size = 2  # Number of pages to read at a time
 
     output_s = analyze_cover(doc.load_page(0).get_text())
+
+    if verbose: logger.log(f".extract_main_content - analyze_cover: {output_s}")
     try:
         output = json.loads(output_s)
+        logger.log('output_s: ', output_s)
+        if 'authors' in output:
+            output['author'] = output['authors']
+        doc_ref.update(output)
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON: {e}")
+    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
 
+    if verbose: logger.log(f".extract_main_content - TODO - update article with output from here...")
+    if verbose: logger.log(f".extract_main_content - pdf has {len(doc)} pages")
     # Loop through each pair of pages and extract text
     for start_page in range(0, len(doc), chunk_size):
         text_chunk = ""
         end_page = min(start_page + chunk_size, len(doc))
         for page_num in range(start_page, end_page):
             page = doc.load_page(page_num)
-            text_chunk += page.get_text()
+            n_tokens = len(encoding.encode(page.get_text()))
+            if n_tokens < 2000:
+                if verbose: logger.log(f"Page: {page_num}, added {len(encoding.encode(page.get_text()))} tokens")
+                text_chunk += page.get_text()
+            else:
+                if verbose: logger.log(f"Page: {page_num}, skipped {len(encoding.encode(page.get_text()))} tokens")
+                continue
 
         # Putting this before the break ensures the last slug of text is included.
         full_text += text_chunk
 
+        n_tokens = len(encoding.encode(text_chunk))
+        if verbose: logger.log(f"attempting to analyze {n_tokens} tokens")
         if not analyze_text_chunk(text_chunk):
+            logger.log("Found end of text content.")
             break  # Exit loop if LLM determines end of main content reached
 
     doc.close()
@@ -141,17 +161,21 @@ def chunk_list(input_list, n):
     return chunks
 
 
-def process_article(file_path, verbose= False):
-    output = extract_main_content(file_path)
+def process_article(file_path, doc_ref, verbose= False):
+
+    logger.log(f'process_article.verbose: {verbose}')
+    output = extract_main_content(file_path, doc_ref)
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
     tokens = encoding.encode(output["text"])
     n_tokens = len(tokens)
+
     large_threshold = 14000
-    if verbose: print(f"Processing {file_path}. {n_tokens} tokens.")
+    if verbose: logger.log(f"Processing {file_path}. {n_tokens} tokens.")
     if n_tokens > large_threshold:
-        if verbose: print(f"Large file, splitting into chunks")
+        if verbose: logger.log(f"Large file, splitting into chunks")
         parts = []
         chunks = chunk_list(encoding.encode(output['text']), (n_tokens // large_threshold)+1)
+        logger.log(f"{len(chunks)} found to summarize")
         for i, chunk in enumerate(chunks):
             link_text = output['title']+ f"-p{i+1}"
             chunk_text = encoding.decode(chunk)
@@ -183,19 +207,7 @@ def process_article(file_path, verbose= False):
         'author': output['authors'],
         'journal': output['journal'],
         'parts': output['parts'],
-        'id': '',  # make a uuid here
-        'ratings': [],
-        's3': {
-            "bucket": "",
-            "key": ""
-        },
-        'saves': [], # list of check out objects
-        'tags': [],  # list of tags, will use this later for organizing
-        'short_description': '',
-        'avg_rating': 0.00,  # updates on new rating (will be used for sorting)
-        'n_saves': 0,  # updates on new checkout (will be used for sorting)
-        'created': "",  # Interpreted by firebase as timestamp on write
-        'views': 0
+
     }
     return final_output
 

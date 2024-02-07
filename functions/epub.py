@@ -222,6 +222,15 @@ def book_dict_to_markdown(book_dict):
                         sleep(5)  # Sleep for 5 seconds before the next retry
                     else:
                         print("Max retries reached. Exiting.")
+                except openai.error.Timeout as e:
+                    print(f"Retry {retry_count+1}/{max_retries}: "
+                          f"openai.error.timeout - {e}")
+                    retry_count += 1
+                    if retry_count < max_retries:
+                        # Wait for some time before retrying (you can adjust the delay)
+                        sleep(5)  # Sleep for 5 seconds before the next retry
+                    else:
+                        print("Max retries reached. Exiting.")
             title= completion.choices[0].message.content
         elif len(c['title']) == 1:
             title = c['title'][0]

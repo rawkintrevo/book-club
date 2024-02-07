@@ -5,12 +5,14 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import { useNavigate } from 'react-router-dom';
 
 
-const functions = getFunctions();
-const downloadAndUpload = httpsCallable(functions, 'downloadAndUpload');
 
 function CreateFromUrl({ firestore, auth, storage }) {
     const { currentUser } = useAuth();
     const navigate = useNavigate();
+
+    const functions = getFunctions();
+    const downloadAndUpload = httpsCallable(functions, 'downloadAndUpload');
+
 
     const [url, setUrl] = useState(''); // State to capture the URL input
 

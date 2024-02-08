@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {doc, FieldValue, getDoc, onSnapshot, updateDoc} from 'firebase/firestore';
+import {doc, getDoc, onSnapshot, updateDoc} from 'firebase/firestore';
 import {Link, useLocation} from 'react-router-dom';
 
 import {Accordion, Button, Card, Spinner} from "react-bootstrap";

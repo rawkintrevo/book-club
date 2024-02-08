@@ -61,7 +61,7 @@ function ListArticles({ firestore, auth, by, currentUser }) {
     };
 
     getContentReadMap();
-  }, []); // Empty dependency array ensures this effect runs only once
+  }, [currentUser.id, firestore]); // Empty dependency array ensures this effect runs only once
 
   useEffect(() => {
     console.log('ListArticles.useEffect()')

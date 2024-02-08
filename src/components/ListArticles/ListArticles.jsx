@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import {Button, Card, Col, Row} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFile, faBook } from '@fortawesome/free-solid-svg-icons';
 // ... (import statements)
 
 function ListArticles({ firestore, auth, by, currentUser }) {
@@ -100,7 +102,13 @@ function ListArticles({ firestore, auth, by, currentUser }) {
                 <Col md={8} lg={8}>
                   <div style={{ textAlign: 'left' }}>
                     <p>
-                      <Link to={'/content/' + article.id}><b>{article.title}</b></Link>
+
+                      {article.type === 'article' ? (
+                          <FontAwesomeIcon icon={faFile} style={{ marginLeft: '5px' }} />
+                      ) : (
+                          <FontAwesomeIcon icon={faBook} style={{ marginLeft: '5px' }} />
+                      )}
+                      &nbsp; <Link to={'/content/' + article.id}><b>{article.title}</b></Link>
                     </p>
                     <p style={{ fontSize: '0.6rem' }}>
                       {article.author}

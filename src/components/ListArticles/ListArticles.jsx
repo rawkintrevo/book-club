@@ -1,48 +1,10 @@
-import { collection, doc, query, orderBy, limit, startAfter, getDoc, getDocs, where } from 'firebase/firestore';
+import { collection, doc, query, orderBy, limit, getDoc, getDocs, startAfter } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
-import {Button, Card, Col, Row} from 'react-bootstrap';
-import {Link} from "react-router-dom";
+import {Card, Col, Row, Form, Dropdown, DropdownButton, Pagination} from 'react-bootstrap';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFile as farFile,
-  faBook,
-  faBookOpen } from '@fortawesome/free-solid-svg-icons';
-
-import {
-  faFile,
-  faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
-
-// ... (import statements)
+import ListContentItem from "../ListContentItem/ListContentItem";
 
 function ListArticles({ firestore, auth, by, currentUser }) {
-  // State to store the list of articles and the last document to paginate
-  const [articles, setArticles] = useState([]);
-  const [lastDocument, setLastDocument] = useState(null);
-  const [contentReadMap, setContentReadMap] = useState({});
-
-  const renderIcon = (article) => {
-    const isRead = contentReadMap.hasOwnProperty(article.id) || false;
-    if (article.type === 'article') {
-      if (isRead) {
-        return <FontAwesomeIcon icon={faFile} style={{ marginLeft: '5px' }} />
-      } else {
-        return <FontAwesomeIcon icon={farFile} style={{ marginLeft: '5px' }} />
-      }
-    } else if (article.type === 'book') {
-      if (isRead) {
-        return <FontAwesomeIcon icon={faBookOpen} style={{ marginLeft: '5px' }} />
-      } else {
-        return <FontAwesomeIcon icon={faBook} style={{ marginLeft: '5px' }} />
-      }
-
-    } else {
-      return <FontAwesomeIcon icon={faQuestionCircle}style={{ marginLeft: '5px' }} />
-    }
-  }
-
-
-
   useEffect(() => {
     const userDocRef = doc(firestore, 'users', currentUser.id);
     const getContentReadMap = async () => {
@@ -63,77 +25,92 @@ function ListArticles({ firestore, auth, by, currentUser }) {
     getContentReadMap();
   }, [currentUser.id, firestore]); // Empty dependency array ensures this effect runs only once
 
-  useEffect(() => {
-    console.log('ListArticles.useEffect()')
-    const fetchArticles = async () => {
-      const articlesCollection = collection(firestore, 'content');
+  const [content, setContent] = useState([]);
+  const [contentReadMap, setContentReadMap] = useState({})
+  const [showUnreadOnly, setShowUnreadOnly] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Number of items to display per page
 
-      // Query the "articles" collection, order by some field (e.g., timestamp), and limit to 10 items
-      let q = query(articlesCollection, orderBy('created', 'desc'), limit(10));
-      if (by === "user") {
-        q = query(
-            articlesCollection,
-            where('created_by.id', '==', currentUser.id),
-            orderBy('created', 'desc'),
-            limit(10)
-        );
-      }
-
-      try {
-        const querySnapshot = await getDocs(q);
-
-        const newArticles = [];
-
-        querySnapshot.forEach((doc) => {
-          // Add article data to the list
-          newArticles.push({ id: doc.id, ...doc.data() });
-        });
-
-        // Update the state with the new articles and set the last document for pagination
-        setArticles(newArticles);
-        setLastDocument(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      }
-    };
-
-    fetchArticles();
-  }, [firestore, by, currentUser]);
-
-  // Function to load more articles
-  const loadMoreArticles = async () => {
-    if (lastDocument) {
-      const articlesCollection = collection(firestore, 'content');
-      const q = query(articlesCollection, orderBy('created', 'desc'), startAfter(lastDocument), limit(10));
-
-      try {
-        const querySnapshot = await getDocs(q);
-
-        const newArticles = [];
-
-        querySnapshot.forEach((doc) => {
-          newArticles.push({ id: doc.id, ...doc.data() });
-        });
-
-        // Append the new articles to the existing list
-        setArticles([...articles, ...newArticles]);
-
-        // Update the last document for further pagination
-        setLastDocument(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      } catch (error) {
-        console.error('Error fetching more articles:', error);
-      }
-    }
+  const [orderByVar, setOrderByVar] = useState('created'); // Default value
+  const [ascOrDesc, setAscOrDesc] = useState("desc")
+  const handleOrderByChange = (value) => {
+    setOrderByVar(value);
   };
 
-  // Rest of your component code here
+  const handleAscOrDescChange = (value) => {
+    setAscOrDesc(value);
+  };
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line
+  }, [currentPage, showUnreadOnly, orderByVar, ascOrDesc]);
+
+  async function fetchData() {
+    const contentRef = collection(firestore, 'content');
+    let contentQuery= query(contentRef,
+        orderBy(orderByVar, ascOrDesc), limit(itemsPerPage));;
+
+    if (currentPage !== 1) {
+      const lastVisibleContent = content[content.length - 1];
+      contentQuery = query(contentRef,
+          orderBy(orderByVar, ascOrDesc),
+          startAfter(lastVisibleContent[orderByVar]),
+          limit(itemsPerPage));
+    }
+    const readContentIds = Object.keys(contentReadMap);
+    const querySnapshot = await getDocs(contentQuery);
+
+    const fetchedContent = [];
+    querySnapshot.forEach(doc => {
+      const data = { id: doc.id, ...doc.data() };
+      if (showUnreadOnly && readContentIds.includes(data.id)) {
+
+        // Skip read content when showUnreadOnly is true
+        return;
+      }
+      fetchedContent.push(data);
+    });
+
+    console.log(fetchedContent.length, "new items")
+    console.log("fetchedContent: ", fetchedContent)
+    setContent(fetchedContent);
+  }
+
+  function toggleShowUnreadOnly(value) {
+    setShowUnreadOnly(!showUnreadOnly);
+  }
+
+  function handlePageChange(page) {
+    setCurrentPage(page);
+  }
 
   return (
       <div>
-        {/* ... (existing code) */}
-
         <Card.Body>
           <div>
+            <Row key={"controls"} className="align-items-center">
+              <Col md={2} lg={2}>
+                <Form.Check
+                    type="switch"
+                    id="unread-switch"
+                    label="Unread Only"
+                    checked={showUnreadOnly}
+                    onChange={toggleShowUnreadOnly}
+                />
+              </Col>
+              <Col md={6} lg={6}>
+                Order By:
+                <DropdownButton title={orderByVar} onSelect={handleOrderByChange}>
+                  <Dropdown.Item eventKey="created">Created</Dropdown.Item>
+                  <Dropdown.Item eventKey="avg_rating">Rating</Dropdown.Item>
+                </DropdownButton>
+                <DropdownButton title={ascOrDesc} onSelect={handleAscOrDescChange}>
+                  <Dropdown.Item eventKey="asc">Ascending</Dropdown.Item>
+                  <Dropdown.Item eventKey="desc">Descending</Dropdown.Item>
+                </DropdownButton>
+              </Col>
+            </Row>
             <Row key={"header"}>
               <Col md={8} lg={8}><div style={{ textAlign: 'left' }}>
                 <b>Title</b>/Author(s)
@@ -147,41 +124,19 @@ function ListArticles({ firestore, auth, by, currentUser }) {
             </Row>
           </div>
           {/* Render the list of articles */}
-          {articles.map((article) => (
+          {content.map((article) => (
                 // <li key={article.id}>{article.title}</li>
-              <Row key={article.id}>
-                <Col md={8} lg={8}>
-                  <div style={{ textAlign: 'left' }}>
-                    <p>
-                      {renderIcon(article)}
-                      &nbsp; <Link to={'/content/' + article.id}><b>{article.title}</b></Link>
-                    </p>
-                    <p style={{ fontSize: '0.6rem' }}>
-                      {article.author}
-                    </p>
-                  </div>
-                </Col>
-
-                <Col md={1} lg={1}>
-                  {article.avg_rating}
-                </Col>
-                <Col md={1} lg={1} style={{ marginBottom: '10px' }}>
-                  {article.n_saves}
-                </Col>
-                <Col md={1} lg={1} style={{ marginBottom: '10px' }}>
-                  {article.views}
-                </Col>
-                <Col md={1} lg={1}>
-                  {article.created.toDate().toLocaleDateString()}
-                </Col>
-                <hr/>
-              </Row>
+              <ListContentItem key={article.id} article={article} contentReadMap={contentReadMap} />
               ))}
-          {/* Button to load more articles */}
-          {lastDocument && (
-              <Button varient="primary" onClick={loadMoreArticles}>Next Page</Button>
-          )}
+
         </Card.Body>
+        <Card.Footer>
+          <Pagination>
+            <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+            <Pagination.Item active>{currentPage}</Pagination.Item>
+            <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} />
+          </Pagination>
+        </Card.Footer>
       </div>
   );
 }

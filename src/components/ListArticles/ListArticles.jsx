@@ -1,16 +1,67 @@
-import { collection, query, orderBy, limit, startAfter, getDocs, where } from 'firebase/firestore';
+import { collection, doc, query, orderBy, limit, startAfter, getDoc, getDocs, where } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import {Button, Card, Col, Row} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile, faBook } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFile as farFile,
+  faBook,
+  faBookOpen } from '@fortawesome/free-solid-svg-icons';
+
+import {
+  faFile,
+  faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
+
 // ... (import statements)
 
 function ListArticles({ firestore, auth, by, currentUser }) {
   // State to store the list of articles and the last document to paginate
   const [articles, setArticles] = useState([]);
   const [lastDocument, setLastDocument] = useState(null);
+  const [contentReadMap, setContentReadMap] = useState({});
+
+  const renderIcon = (article) => {
+    const isRead = contentReadMap.hasOwnProperty(article.id) || false;
+    if (article.type === 'article') {
+      if (isRead) {
+        return <FontAwesomeIcon icon={faFile} style={{ marginLeft: '5px' }} />
+      } else {
+        return <FontAwesomeIcon icon={farFile} style={{ marginLeft: '5px' }} />
+      }
+    } else if (article.type === 'book') {
+      if (isRead) {
+        return <FontAwesomeIcon icon={faBookOpen} style={{ marginLeft: '5px' }} />
+      } else {
+        return <FontAwesomeIcon icon={faBook} style={{ marginLeft: '5px' }} />
+      }
+
+    } else {
+      return <FontAwesomeIcon icon={faQuestionCircle}style={{ marginLeft: '5px' }} />
+    }
+  }
+
+
+
+  useEffect(() => {
+    const userDocRef = doc(firestore, 'users', currentUser.id);
+    const getContentReadMap = async () => {
+      try {
+        const docSnapshot = await getDoc(userDocRef);
+        if (docSnapshot.exists()) {
+          const userData = docSnapshot.data();
+          const contentRead = userData.content && userData.content.read ? userData.content.read : {};
+          setContentReadMap(contentRead);
+        } else {
+          console.log('User document not found.');
+        }
+      } catch (error) {
+        console.error('Error getting content read map:', error);
+      }
+    };
+
+    getContentReadMap();
+  }, []); // Empty dependency array ensures this effect runs only once
 
   useEffect(() => {
     console.log('ListArticles.useEffect()')
@@ -102,12 +153,7 @@ function ListArticles({ firestore, auth, by, currentUser }) {
                 <Col md={8} lg={8}>
                   <div style={{ textAlign: 'left' }}>
                     <p>
-
-                      {article.type === 'article' ? (
-                          <FontAwesomeIcon icon={faFile} style={{ marginLeft: '5px' }} />
-                      ) : (
-                          <FontAwesomeIcon icon={faBook} style={{ marginLeft: '5px' }} />
-                      )}
+                      {renderIcon(article)}
                       &nbsp; <Link to={'/content/' + article.id}><b>{article.title}</b></Link>
                     </p>
                     <p style={{ fontSize: '0.6rem' }}>

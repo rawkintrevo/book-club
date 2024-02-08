@@ -1,21 +1,46 @@
 import React, {useEffect, useState} from 'react';
-import {doc, getDoc, onSnapshot} from 'firebase/firestore';
+import {doc, FieldValue, getDoc, onSnapshot, updateDoc} from 'firebase/firestore';
 import {Link, useLocation} from 'react-router-dom';
 
 import {Accordion, Button, Card, Spinner} from "react-bootstrap";
 import {getDownloadURL, ref} from 'firebase/storage';
 import ContentFooter from "../ContentFooter/ContentFooter";
+import {useAuth} from "../AuthProvider/AuthProvider";
+
+
 
 
 function Content( {firestore, auth, storage}) {
+    const { currentUser } = useAuth();
     const location = useLocation();
     const articleId = location.pathname.split('/').pop(); // Get the 'id' from the URL
     const [link, setLink] = useState(null);
     const [article, setArticle] = useState(null);
     const [activeItem, setActiveItem] = useState(null);
 
+
+    const updateContentRead = async (articleId) => {
+        const userDocRef = doc(firestore, 'users', currentUser.id);
+        const userData = (await getDoc(userDocRef)).data()
+        try {
+            await updateDoc(userDocRef, {
+                // Use FieldValue to merge the new data into the existing map
+                'content.read': {
+                    ...userData.content.read,
+                    [articleId]: true
+                }});
+            console.log('Content read map updated successfully.');
+        } catch (error) {
+            console.error('Error updating content read map:', error);
+        }
+    };
+
     const handleAccordionClick = (index) => {
         setActiveItem(activeItem === index ? null : index);
+        if (index === article.parts.length - 1) {
+            console.log("marking document as read")
+            updateContentRead(articleId)
+        }
     };
 
     const generateDownloadLink = async (bucketName, keyName) => {

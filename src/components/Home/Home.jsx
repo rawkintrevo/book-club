@@ -48,7 +48,7 @@ function Home( {firestore, auth}) {
                                 marginBottom: '10px',
                                 borderRadius: '5px',
                             }}>Welcome back {auth.currentUser.displayName}</Card.Title>
-                            <ListArticles firestore={firestore} auth={auth}/>
+                            <ListArticles firestore={firestore} auth={auth} currentUser={currentUser}/>
                         </Card>
                     </Container>
                 </div>

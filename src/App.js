@@ -17,6 +17,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Create from "./components/Create/Create";
 import ContentPage from "./components/ContentPage/ContentPage";
 import MyStuff from "./components/MyStuff/MyStuff";
+import User from "./components/User/User";
 
 
 
@@ -58,6 +59,8 @@ function App() {
                     auth = {auth} storage={storage}/>} />
                     <Route path="/mystuff"         element={<MyStuff auth={auth}
                                                            firestore={firestore}/>} />
+                    <Route path="/user/:id" element={<User firestore={firestore}
+                                                                     auth = {auth} storage={storage}/>} />
                     {/* Add more routes for other pages/components */}
                 </Routes>
             </div>

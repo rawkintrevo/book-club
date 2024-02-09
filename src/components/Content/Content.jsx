@@ -124,7 +124,9 @@ function Content( {firestore, auth, storage}) {
                         ) : null}
                         <p>
                             <b>Created:</b> {article.created.toDate().toLocaleDateString()} &nbsp;
-                            {article.created_by ? <><b>by:</b> {article.created_by.name}</> : null}
+                            {article.created_by ? <><b>by:</b>
+                               &nbsp; <Link to={"/user/"+article.created_by.id}>{article.created_by.name}</Link></> : null}
+
                         </p>
                         <div>
                             {link ? (

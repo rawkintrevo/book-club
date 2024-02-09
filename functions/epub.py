@@ -181,8 +181,6 @@ def book_dict_to_markdown(book_dict):
     output = {
         "parts": [],
         "type": "book",
-        "id": "",
-        "created" : "",
         "title": book_dict['title'],
         "author": book_dict['author'],
         "short_description": "",
@@ -192,7 +190,6 @@ def book_dict_to_markdown(book_dict):
         "tags": [],
         "saves": [],
         "ratings": [],
-        "s3": {"bucket": "", "key": ""}
     }
     for i in range(len(book_dict['combined_items'])):
         c = book_dict['combined_items'][i]

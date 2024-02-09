@@ -54,7 +54,7 @@ function Create( {firestore, auth, storage}) {
                             }}
                         >
                             <Tab eventKey="upload" title="Upload">
-                                {activeTab === 'upload' && <CreateFromUpload />}
+                                {activeTab === 'upload' && <CreateFromUpload storage={storage}/>}
                             </Tab>
                             <Tab eventKey="url" title="URL">
                                 {activeTab === 'url' && <CreateFromUrl />}

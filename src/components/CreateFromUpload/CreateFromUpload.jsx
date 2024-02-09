@@ -1,7 +1,7 @@
 import { useAuth } from "../AuthProvider/AuthProvider";
 import {Card, Form, Button, ProgressBar} from "react-bootstrap";
 import React, { useState } from "react";
-import {  ref, uploadBytesResumable } from 'firebase/storage';
+import {ref, uploadBytesResumable } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 
 function CreateFromUpload({firestore, auth, storage}) {
@@ -39,7 +39,12 @@ function CreateFromUpload({firestore, auth, storage}) {
                 const fileNameParts = selectedFile.name.split(".");
                 const fileExtension = fileNameParts[fileNameParts.length - 1];
 
-                const fileRef = ref(storageRef, user_uid + '/'+ doc_uid + '.' + fileExtension);
+                const uploadPath = user_uid + '/'+ doc_uid + '.' + fileExtension;
+                console.log('uploadPath', uploadPath);
+                console.log('ref: ', ref);
+                console.log('storageRef: ', storageRef);
+
+                const fileRef = ref(storageRef, uploadPath);
 
                 const uploadTask = uploadBytesResumable(fileRef, selectedFile);
 

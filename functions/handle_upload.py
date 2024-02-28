@@ -19,15 +19,18 @@ def handle_upload(bucket_name, file_name, db, verbose= False):
 
     user_uid = file_name.split('/')[0]
     file_name_wo_path = ''.join(file_name.split('/')[-1])
-    if verbose: print(f"uid: {user_uid}")
+
 
     # TODO:
     #  1. write an empty object
     #  2. update created field of user to include ref to id of empty object created
     user_ref = db.collection('users').document(user_uid)
     user_name = user_ref.get().get('displayName')
-    print(f"User Name: {user_name}")
+    if verbose: print(f"User Name: {user_name}")
     uuid_value = file_name.split('/')[1].split('.')[0]
+    if verbose:
+        print(f"uid: {user_uid} creating {uuid_value} for {user_name}")
+        logger.log(f"uid: {user_uid} creating {uuid_value} for {user_name}")
     output = {'id': uuid_value, 's3': {'bucket': bucket_name, 'key': file_name}, 'ratings': [], 'saves': [], 'tags': [],
               'short_description': '', 'avg_rating': 0.00, 'n_saves': 0, 'created': gc_firestore.SERVER_TIMESTAMP,
               'views': 0, 'status': 'creating', 'title': 'New Content',
@@ -50,6 +53,7 @@ def handle_upload(bucket_name, file_name, db, verbose= False):
         if verbose: logger.log('Ends with ".pdf" processing as journal article.')
         output2 = process_article(temp_file, doc_ref, verbose)
     elif file_name.endswith(".epub"):
+        if verbose: print("epub")
         book_dict = process_epub_to_book_dict(temp_file)
         logger.log("Book Dict Created: " + book_dict['title'])
         output2 = book_dict_to_markdown(book_dict)

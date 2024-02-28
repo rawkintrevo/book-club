@@ -1,14 +1,14 @@
 import {useAuth} from "../AuthProvider/AuthProvider";
-import {Navigate} from "react-router-dom";
+import {Navigate, useLocation} from "react-router-dom";
 import Review from "../Review/Review";
 import BcNavbar from "../BcNavbar/BcNavbar";
 import {Card, Container} from "react-bootstrap";
 import ListArticles from "../ListArticles/ListArticles";
 
-
-
-function MyStuff( {firestore, auth, storage}) {
+function User( {firestore, auth}) {
     const {currentUser} = useAuth();
+    const location = useLocation();
+    const userId = location.pathname.split('/').pop();
 
     if (currentUser === null) {
         return <Navigate to="/login"/>;
@@ -17,13 +17,12 @@ function MyStuff( {firestore, auth, storage}) {
             <Review />
         )
     } else {
-
         return (
             <div>
                 <BcNavbar firestore={firestore}
                           auth={auth}/>
                 <div style={{
-                    backgroundImage: 'url("/img/mystuff.png")',
+                    backgroundImage: 'url("/img/home.png")',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center top',
                     // height: '100vh',
@@ -45,11 +44,9 @@ function MyStuff( {firestore, auth, storage}) {
                                 marginTop: '0',
                                 marginBottom: '10px',
                                 borderRadius: '5px',
-                            }}>Welcome back {auth.currentUser.displayName}</Card.Title>
-
-                            <ListArticles firestore={firestore} auth={auth} by="user"
-                                          currentUser={currentUser}
-                            userId={currentUser.id}/>
+                            }}>Under Construction</Card.Title>
+                            <ListArticles firestore={firestore} auth={auth}
+                                          currentUser={currentUser} userId={userId}/>
                         </Card>
                     </Container>
                 </div>
@@ -57,7 +54,6 @@ function MyStuff( {firestore, auth, storage}) {
 
         )
     }
-
 }
 
-export default MyStuff;
+export default User;

@@ -33,6 +33,9 @@ function BcNavbar( {auth, firestore}) {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto">
+                    <Nav.Link as={Link} to="/clubs">
+                        Clubs
+                    </Nav.Link>
                     <Nav.Link as={Link} to="/">
                         Find new stuff
                     </Nav.Link>

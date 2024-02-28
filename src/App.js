@@ -18,6 +18,8 @@ import Create from "./components/Create/Create";
 import ContentPage from "./components/ContentPage/ContentPage";
 import MyStuff from "./components/MyStuff/MyStuff";
 import User from "./components/User/User";
+import Clubs from "./components/Clubs/Clubs";
+import Club from "./components/Club/Club";
 
 
 
@@ -61,6 +63,10 @@ function App() {
                                                            firestore={firestore}/>} />
                     <Route path="/user/:id" element={<User firestore={firestore}
                                                                      auth = {auth} storage={storage}/>} />
+                    <Route path="/clubs" element={<Clubs firestore={firestore}
+                                                           auth = {auth}/>} />
+                    <Route path="/club/:id" element={<Club firestore={firestore}
+                                                           auth = {auth}/>} />
                     {/* Add more routes for other pages/components */}
                 </Routes>
             </div>

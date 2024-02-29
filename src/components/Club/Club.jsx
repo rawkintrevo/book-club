@@ -26,6 +26,7 @@ function Club( {firestore, auth, storage}) {
                     const userData = docSnapshot.data();
                     const contentRead = userData.content && userData.content.read ? userData.content.read : {};
                     setContentReadMap(contentRead);
+
                 } else {
                     console.log('User document not found.');
                 }

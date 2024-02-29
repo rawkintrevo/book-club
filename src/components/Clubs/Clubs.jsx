@@ -58,7 +58,8 @@ function Clubs({firestore, auth, storage}) {
                             <ListClubs firestore={firestore}
                                        auth={auth}
                                        currentUser={currentUser}
-                                       userId={currentUser.id}/>
+                                       userId={currentUser.id}
+                            />
                         </Card>
                         {currentUser.verifAdmin && (
                             <>

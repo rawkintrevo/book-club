@@ -6,6 +6,7 @@ import {Accordion, Button, Card, Spinner} from "react-bootstrap";
 import {getDownloadURL, ref} from 'firebase/storage';
 import ContentFooter from "../ContentFooter/ContentFooter";
 import {useAuth} from "../AuthProvider/AuthProvider";
+import AddToClubModal from "../AddToClubModal/AddToClubModal";
 
 
 
@@ -17,6 +18,11 @@ function Content( {firestore, auth, storage}) {
     const [link, setLink] = useState(null);
     const [article, setArticle] = useState(null);
     const [activeItem, setActiveItem] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
 
 
     const updateContentRead = async (articleId) => {
@@ -128,26 +134,40 @@ function Content( {firestore, auth, storage}) {
                                &nbsp; <Link to={"/user/"+article.created_by.id}>{article.created_by.name}</Link></> : null}
 
                         </p>
-                        <div>
+                        <div className="d-flex flex-column align-items-start">
                             {link ? (
-                                <Link to={link} target="_blank" download>
-                                    <Button varient="primary" style={{ marginBottom: '10px' }}>
+                                <Link to={link} target="_blank" download className="mb-3">
+                                    <Button variant="primary">
                                         Download File
                                     </Button>
                                 </Link>
                             ) : (
-                                <Button variant="primary" disabled>
+                                <Button variant="primary" disabled className="mb-3">
                                     <Spinner
                                         as="span"
                                         animation="grow"
                                         size="sm"
                                         role="status"
                                         aria-hidden="true"
+                                        className="me-2"
                                     />
                                     Loading Download Link...
                                 </Button>
                             )}
+
+                            {currentUser.verifAdmin && (
+                                <div>
+                                    <Button onClick={toggleModal} className="mb-3">Add to Club</Button>
+                                    <AddToClubModal
+                                        firestore={firestore}
+                                        article={article}
+                                        show={isModalOpen}
+                                        handleClose={toggleModal}
+                                    />
+                                </div>
+                            )}
                         </div>
+
                         {article.parts !== undefined ? (
                             <Accordion defaultActiveKey={activeItem}>
                                 {article.parts.map((part, index) => (

@@ -33,6 +33,6 @@ def handle_upload(event: storage_fn.CloudEvent[storage_fn.StorageObjectData]):
     # Return a response (optional)
     return 'File upload handled successfully'
 
-@scheduler_fn.on_schedule(schedule="every day 00:33")
+@scheduler_fn.on_schedule(schedule="every day 00:33", memory=options.MemoryOption.MB_512)
 def get_hf_papers(event: scheduler_fn.ScheduledEvent):
     new_hf_papers()

@@ -1,13 +1,10 @@
-import { useAuth } from "../AuthProvider/AuthProvider";
-import { Navigate } from "react-router-dom";
-import {Card, Container, Form, Row, Col, Button} from "react-bootstrap";
+import {Card, Form, Row, Col, Button} from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { collection, updateDoc, doc, onSnapshot } from 'firebase/firestore';
-import BcNavbar from "../BcNavbar/BcNavbar";
+
 
 
 function AdminNewUsers( {firestore, auth}) {
-    const { currentUser } = useAuth();
     const [users, setUsers] = useState([]); // State to store user data
     const [loading, setLoading] = useState(true);
 

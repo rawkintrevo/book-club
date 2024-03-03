@@ -1,7 +1,7 @@
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { Navigate } from "react-router-dom";
 import { Container, Tab, Tabs} from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import BcNavbar from "../BcNavbar/BcNavbar";
 import AdminNewUsers from "../AdminNewUsers/AdminNewUsers";
 import AdminUserPermissions from "../AdminUserPermissions/AdminUserPermissions";

@@ -113,8 +113,8 @@ function ListArticles({ firestore, auth, by, currentUser, userId }) {
         fetchedContent.push(data);
       });
 
-      console.log(fetchedContent.length, "new items")
-      console.log("fetchedContent: ", fetchedContent)
+      // console.log(fetchedContent.length, "new items")
+      // console.log("fetchedContent: ", fetchedContent)
       setContent(fetchedContent);
     }
 

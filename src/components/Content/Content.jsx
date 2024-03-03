@@ -155,7 +155,7 @@ function Content( {firestore, auth, storage}) {
                                 </Button>
                             )}
 
-                            {currentUser.verifAdmin && (
+                            {(currentUser.isSU || currentUser.isMod) && (
                                 <div>
                                     <Button onClick={toggleModal} className="mb-3">Add to Club</Button>
                                     <AddToClubModal

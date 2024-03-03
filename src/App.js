@@ -39,7 +39,6 @@ const storage = getStorage(app);
 
 
 function App() {
-
   return (
       <AuthProvider firestore={firestore} auth={auth}>
           <Router>

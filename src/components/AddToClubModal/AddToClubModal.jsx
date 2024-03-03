@@ -1,25 +1,39 @@
 import { useState, useEffect } from 'react';
 import { Modal, Button, Badge } from 'react-bootstrap';
 import { collection, doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
+import {useAuth} from "../AuthProvider/AuthProvider";
 
 const AddToClubModal = ({ firestore, article, show, handleClose }) => {
+    const {currentUser} = useAuth();
     const [clubs, setClubs] = useState([]);
     const [articleClubs, setArticleClubs] = useState([]);
 
     useEffect(() => {
-        const fetchClubs = async () => {
-            const clubsCollectionRef = collection(firestore, 'clubs');
-            const clubsSnapshot = await getDocs(clubsCollectionRef);
-            const clubsData = clubsSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            setClubs(clubsData);
+        if (currentUser.isSU) {
+            const fetchClubs = async () => {
+                const clubsCollectionRef = collection(firestore, 'clubs');
+                const clubsSnapshot = await getDocs(clubsCollectionRef);
+                const clubsData = clubsSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                setClubs(clubsData);
+                console.log('AddToClubModal.clubs', clubsData);
+                setArticleClubs(article.clubs || []);
+            };
+            fetchClubs();
+        } else if (currentUser.isMod) {
+            setClubs(currentUser.modOf)
+            console.log('addToClubModel.currentUser.modOf', currentUser.modOf);
             setArticleClubs(article.clubs || []);
-        };
+        } else {
+            console.log("user has no clubs");
 
-        fetchClubs();
-    }, [firestore, article]);
+        }
+
+
+
+    }, [firestore, article, currentUser.isSU, currentUser.modOf, currentUser.isMod]);
 
 
     const handleClubClick = async (clubId) => {

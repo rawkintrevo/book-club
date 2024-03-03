@@ -43,7 +43,7 @@ function BcNavbar( {auth, firestore}) {
                         My Stuff
                     </Nav.Link>
                     <Button variant="outline-light" as={Link} to="/upload">Create</Button>
-                    {currentUser && currentUser.verifAdmin && (
+                    {currentUser && currentUser.isSU && (
                         <Nav.Link as={Link} to="/admin">
                             Admin
                         </Nav.Link>

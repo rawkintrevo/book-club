@@ -61,7 +61,7 @@ function Clubs({firestore, auth, storage}) {
                                        userId={currentUser.id}
                             />
                         </Card>
-                        {currentUser.verifAdmin && (
+                        {currentUser.isSU && (
                             <>
                                 <Button onClick={toggleModal}>Create New Club</Button>
                                 <CreateClubModal isOpen={isCreateModalOpen} toggle={toggleModal} firestore={firestore} />

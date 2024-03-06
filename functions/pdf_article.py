@@ -3,6 +3,7 @@ import openai
 import tiktoken
 import json
 
+from time import sleep
 from firebase_functions import logger
 
 
@@ -13,7 +14,7 @@ def is_main_content(llm_response):
 
 
 def analyze_text_chunk(text_chunk):
-
+    sleep(0.25)
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         temperature=0.1,
@@ -61,7 +62,7 @@ def extract_main_content(pdf_path, doc_ref, verbose= True):
 
     if verbose: logger.log(f".extract_main_content - analyze_cover: {output_s}")
     try:
-        output = json.loads(output_s)
+        output = json.loads(output_s, strict=False)
         logger.log('output_s: ', output_s)
         if 'authors' in output:
             output['author'] = output['authors']
@@ -105,6 +106,7 @@ def summarize(text, long_text=False):
     if long_text:
         model="gpt-3.5-turbo-16k"
     print(f"Using Model: {model}")
+    sleep(0.25)
     completion = openai.ChatCompletion.create(
         model=model,
         messages=[
@@ -120,6 +122,7 @@ def summarize(text, long_text=False):
 
 
 def analyze_cover(text_chunk):
+    sleep(0.25)
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         temperature=0.1,

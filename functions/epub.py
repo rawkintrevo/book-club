@@ -4,6 +4,7 @@ import openai
 import tiktoken
 from time import sleep
 from google.cloud.firestore import SERVER_TIMESTAMP
+from firebase_functions import logger
 
 def find_highest_header(soup):
     # Initialize the highest header level as None
@@ -65,7 +66,8 @@ def summarize(text, long_text=False):
     model="gpt-3.5-turbo"
     if long_text:
         model="gpt-3.5-turbo-16k"
-    # print(f"Using Model: {model}")
+    logger.log(f"epub.summarize.model: {model}")
+    sleep(0.25)
     completion = openai.ChatCompletion.create(
         model=model,
         messages=[
@@ -84,14 +86,14 @@ def summarize_string(content):
     encoding = tiktoken.get_encoding("cl100k_base")
     long_text = False
     n_tokens = len(encoding.encode(content))
-    # print(f"Number of tokens: {n_tokens}")
+    # logger.log(f"Number of tokens: {n_tokens}")
     if n_tokens > 2000:
         long_text = True
         if n_tokens > 16000:
-            print(f"------ WARNING: input is {n_tokens} long... truncating to 16000 tokens")
+            logger.log(f"------ WARNING: input is {n_tokens} long... truncating to 16000 tokens")
             encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
             content = encoding.decode(encoding.encode(content)[:16000])
-    # print(f"Summarizing input")
+    # logger.log(f"Summarizing input")
     summary = summarize(content, long_text)
     return summary
 
@@ -169,10 +171,10 @@ def process_epub_to_book_dict(epub_file):
         'content': extract_chapters_from_epub(book),
         'token_count': len(encoding.encode(extract_text_from_epub(book)))
     }
-    print(book_dict['title'])
+    logger.log(book_dict['title'])
     token_part_count = sum(c['token_count'] for c in book_dict['content'])
     p_coverage = float(token_part_count) / book_dict['token_count']
-    print(f"- p coverage- {p_coverage:.2%}")
+    logger.log(f"- p coverage- {p_coverage:.2%}")
     book_dict['combined_items'] = combine_dicts_by_token_count(book_dict['content'], 5000, 14000)
     return book_dict
 
@@ -191,14 +193,18 @@ def book_dict_to_markdown(book_dict):
         "saves": [],
         "ratings": [],
     }
+    logger.log(f"epub.book_dict_to_markdown.loop parts: {len(book_dict['combined_items'])}")
     for i in range(len(book_dict['combined_items'])):
         c = book_dict['combined_items'][i]
+        logger.log(f"epub.book_dict_to_markdown.i: {i}")
         if len(c['title']) > 1:
-            # print("Generating title...")
+            logger.log(f"epub.book_dict_to_markdown.c.title: {c['title']}")
             max_retries = 10
             retry_count = 0
             while retry_count < max_retries:
                 try:
+                    sleep(0.25)
+                    logger.log('epub.book_dict_to_markdown')
                     completion = openai.ChatCompletion.create(
                         model="gpt-3.5-turbo",
                         messages=[
@@ -212,31 +218,55 @@ def book_dict_to_markdown(book_dict):
                             }])
                     break
                 except TimeoutError as e:
-                    print(f"Retry {retry_count+1}/{max_retries}: TimeoutError - {e}")
+                    logger.log(f"Retry {retry_count+1}/{max_retries}: TimeoutError - {e}")
                     retry_count += 1
                     if retry_count < max_retries:
                         # Wait for some time before retrying (you can adjust the delay)
                         sleep(5)  # Sleep for 5 seconds before the next retry
                     else:
-                        print("Max retries reached. Exiting.")
+                        logger.log("Max retries reached. Exiting.")
                 except openai.error.Timeout as e:
-                    print(f"Retry {retry_count+1}/{max_retries}: "
-                          f"openai.error.timeout - {e}")
+                    logger.log(f"Retry {retry_count+1}/{max_retries}: "
+                               f"openai.error.timeout - {e}")
                     retry_count += 1
                     if retry_count < max_retries:
                         # Wait for some time before retrying (you can adjust the delay)
                         sleep(5)  # Sleep for 5 seconds before the next retry
                     else:
-                        print("Max retries reached. Exiting.")
+                        logger.log("Max retries reached. Exiting.")
             title= completion.choices[0].message.content
         elif len(c['title']) == 1:
             title = c['title'][0]
         else:
             title = str(i)
-        # print(f"- {title}")
+        # logger.log(f"- {title}")
         if title.lower() == "index":
             continue
+        # max_retries = 10
+        # retry_count = 0
+        # while retry_count < max_retries:
+            # try:
+        logger.log(f'epub.ebook_dict_to_markdown.text_len: {len(c["text"])}')
         summary = summarize_string(c['text'])
+            # except TimeoutError as e:
+            #     logger.log(f"Retry {retry_count+1}/{max_retries}: TimeoutError - {e}")
+            #     retry_count += 1
+            #     if retry_count < max_retries:
+            #         # Wait for some time before retrying (you can adjust the delay)
+            #         sleep(5)  # Sleep for 5 seconds before the next retry
+            #     else:
+            #         logger.log("Max retries reached. Exiting.")
+            # except openai.error.Timeout as e:
+            #     logger.log(f"Retry {retry_count+1}/{max_retries}: "
+            #                f"openai.error.timeout - {e}")
+            #     retry_count += 1
+            #     if retry_count < max_retries:
+            #         # Wait for some time before retrying (you can adjust the delay)
+            #         sleep(5)  # Sleep for 5 seconds before the next retry
+            #     else:
+            #         logger.log("Max retries reached. Exiting.")
+            #         break
+
         part_output = {
             "summary": summary,
             "title": title,

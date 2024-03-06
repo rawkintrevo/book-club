@@ -9,7 +9,7 @@ from pdf_article import process_article
 from epub import process_epub_to_book_dict, book_dict_to_markdown
 
 
-def handle_upload(bucket_name, file_name, db, verbose= False):
+def handle_upload(bucket_name, file_name, db, verbose=True):
     # Create a Cloud Storage client
     storage_client = storage.Client()
 

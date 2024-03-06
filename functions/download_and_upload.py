@@ -7,7 +7,7 @@ def download_and_upload(url, userId, docId):
     response = requests.get(url)
     content = response.content
 
-    logger.log("Content downloaded successfully")
+    logger.log(f"Content downloaded successfully from {url}")
     # Get the file suffix from the URL
     file_suffix = os.path.splitext(url)[1]
 

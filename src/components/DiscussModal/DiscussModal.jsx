@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { addDoc,
-    collection,
+import {
     getDoc,
-    serverTimestamp,
     setDoc,
     updateDoc, doc } from 'firebase/firestore';
 

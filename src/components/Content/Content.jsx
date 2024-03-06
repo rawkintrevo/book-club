@@ -7,6 +7,7 @@ import {getDownloadURL, ref} from 'firebase/storage';
 import ContentFooter from "../ContentFooter/ContentFooter";
 import {useAuth} from "../AuthProvider/AuthProvider";
 import AddToClubModal from "../AddToClubModal/AddToClubModal";
+import DiscussModal from "../DiscussModal/DiscussModal";
 
 
 
@@ -19,10 +20,14 @@ function Content( {firestore, auth, storage}) {
     const [article, setArticle] = useState(null);
     const [activeItem, setActiveItem] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const [isDiscussModalOpen, setIsDiscussModalOpen] = useState(false);
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
+
+    const toggleDiscussModal = () => {
+        setIsDiscussModalOpen(!isDiscussModalOpen)
+    }
 
 
     const updateContentRead = async (articleId) => {
@@ -154,6 +159,15 @@ function Content( {firestore, auth, storage}) {
                                     Loading Download Link...
                                 </Button>
                             )}
+                            <Button onClick={toggleDiscussModal} className="mb-3">Discuss</Button>
+                            <DiscussModal
+                                firestore={firestore}
+                                article={article}
+                                currentUser={currentUser}
+                                show={isDiscussModalOpen}
+                                handleClose={toggleDiscussModal}
+                            />
+
 
                             {(currentUser.isSU || currentUser.isMod) && (
                                 <div>

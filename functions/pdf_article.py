@@ -112,7 +112,8 @@ def summarize(text, long_text=False):
         messages=[
             {
                 "role": "system",
-                "content": "Summarize content you are provided in great detail (at least 600 words, up to 2000 words). Do not insert knowledge beyond the document into the summary, and do not name the author or title of the work."
+                "content": "Summarize content you are provided in great "
+                           "detail (at least 600 words, up to 2000 words). Do not insert knowledge beyond the document into the summary, and do not name the author or title of the work. Your task is to summarize the document, not continue it. Some documents will end mid-sentance, still summarize the document."
             },
             {
                 "role": "user",

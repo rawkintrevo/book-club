@@ -68,7 +68,7 @@ function AdminUserPermissions( {firestore, auth}) {
                                 </div></Col>
                                 <Col md={1} lg={1}><b>Super</b></Col>
                                 <Col md={1} lg={1}><b>Mod</b></Col>
-                                <Col md={1} lg={1}><b>Deputize as Mod</b></Col>
+                                <Col md={1} lg={1}><b>Clubs</b></Col>
                                 <hr/>
                             </Row>
                         </div>
@@ -105,7 +105,8 @@ function AdminUserPermissions( {firestore, auth}) {
                                             </Form.Group>
                                         </Col>
                                         <Col md={1} lg={1} style={{ marginBottom: '10px' }}>
-                                            {(currentUser.isSU || currentUser.isMod) && (
+                                            {(currentUser.isSU || currentUser.isMod) &&
+                                                (user.isMod) && (
                                                 <div>
                                                     <Button onClick={() => toggleModalForUser(user.id)} className="mb-3">Deputize</Button>
                                                     <AdminSetModModal

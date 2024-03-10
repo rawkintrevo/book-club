@@ -3,6 +3,7 @@ from firebase_admin import storage as fb_storage
 import requests
 import os
 def download_and_upload(url, userId, docId):
+    logger.log(f"download_and_upload called with url: {url}, userId: {userId}, docId: {docId}")
     # Download the content from the URL
     response = requests.get(url)
     content = response.content

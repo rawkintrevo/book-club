@@ -58,10 +58,12 @@ def new_hf_papers():
     if extracted_links2:
         for i, link in enumerate(extracted_links2):
             paper_link = [l for l in extract_links('https://huggingface.co' + link) if l.startswith('https://arxiv.org/pdf')][0]
-            logger.log(f"processing {paper_link}")
+            docId= str(uuid.uuid4())
+            logger.log(f"download_and_upload {paper_link}, "
+                       f"huggingface_papers_feed, {docId}")
             download_and_upload(url=paper_link + ".pdf",
                                 userId="huggingface_papers_feed",
-                                docId=str(uuid.uuid4()))
+                                docId=docId)
             sleep(1)
     else:
         print("No links found on the provided URL.")

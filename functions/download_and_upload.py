@@ -6,6 +6,7 @@ def download_and_upload(url, userId, docId):
     logger.log(f"download_and_upload called with url: {url}, userId: {userId}, docId: {docId}")
     # Download the content from the URL
     response = requests.get(url)
+    logger.log(f"{docId} status code: {response.status_code}")
     content = response.content
 
     logger.log(f"Content downloaded successfully from {url}")

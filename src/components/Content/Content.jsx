@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {doc, getDoc, onSnapshot, updateDoc} from 'firebase/firestore';
-import {Link, useLocation} from 'react-router-dom';
+import {doc,
+    deleteDoc,
+    getDoc, onSnapshot, updateDoc} from 'firebase/firestore';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 
 import {Accordion, Button, Card, Spinner} from "react-bootstrap";
 import {getDownloadURL, ref} from 'firebase/storage';
@@ -21,6 +23,9 @@ function Content( {firestore, auth, storage}) {
     const [activeItem, setActiveItem] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDiscussModalOpen, setIsDiscussModalOpen] = useState(false);
+    const [deletionInProgress, setDeletionInProgress] = useState(false);
+
+    const navigate = useNavigate();
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
@@ -112,7 +117,18 @@ function Content( {firestore, auth, storage}) {
         // eslint-disable-next-line
     }, [articleId, firestore, storage]);
 
+    const handleDelete = async () => {
+        const articleRef = doc(firestore, 'content', articleId);
+        setDeletionInProgress(true);
 
+        try {
+            await deleteDoc(articleRef);
+            navigate("/")
+            console.log('Document successfully deleted!');
+        } catch (error) {
+            console.error('Erro deleting document: ', error);
+        }
+    };
 
     return (
         <div>
@@ -178,6 +194,16 @@ function Content( {firestore, auth, storage}) {
                                         show={isModalOpen}
                                         handleClose={toggleModal}
                                     />
+                                    &nbsp;
+                                    <Button variant="danger" onClick={handleDelete} className="mb-3">
+                                        {deletionInProgress ? (
+                                            <Spinner animation="border" role="status">
+                                                <span className="visually-hidden">Deleting...</span>
+                                            </Spinner>
+                                        ) : (
+                                            'Delete'
+                                        )}
+                                    </Button>
                                 </div>
                             )}
                         </div>

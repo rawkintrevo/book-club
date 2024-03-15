@@ -9,7 +9,8 @@ from pdf_article import process_article
 from epub import process_epub_to_book_dict, book_dict_to_markdown
 
 
-def handle_upload(bucket_name, file_name, db, verbose=True):
+def handle_upload(bucket_name, file_name, db, verbose=False):
+    logger.log(f"handle_upload.handle_upload: {file_name}")
     # Create a Cloud Storage client
     storage_client = storage.Client()
 
@@ -53,9 +54,11 @@ def handle_upload(bucket_name, file_name, db, verbose=True):
         if verbose: logger.log('Ends with ".pdf" processing as journal article.')
         output2 = process_article(temp_file, doc_ref, verbose)
     elif file_name.endswith(".epub"):
-        if verbose: print("epub")
+        if verbose:
+            print("epub")
         book_dict = process_epub_to_book_dict(temp_file)
-        logger.log("Book Dict Created: " + book_dict['title'])
+        if verbose:
+            logger.log("Book Dict Created: " + book_dict['title'])
         output2 = book_dict_to_markdown(book_dict)
 
     output.update(output2)

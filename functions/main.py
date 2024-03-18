@@ -27,6 +27,7 @@ def handle_upload(event: storage_fn.CloudEvent[storage_fn.StorageObjectData]):
     verbose=True
     # Get the file name and bucket name from the event data
     file_name = event.data.name
+    logger.log(f"main.handle_upload: {file_name}")
     bucket_name = event.data.bucket
     handle_upload_local(bucket_name, file_name, db, verbose)
 
